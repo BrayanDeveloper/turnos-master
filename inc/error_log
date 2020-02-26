@@ -1,0 +1,2 @@
+[12-Feb-2020 18:24:13 America/Bogota] PHP Fatal error:  Call to a member function fetchAll() on boolean in /home/computrons/recaudos.computrons.co/controllers/funciones.php on line 1143
+[13-Feb-2020 11:34:59 America/Bogota] PHP Fatal error:  Call to a member function fetchAll() on boolean in /home/computrons/recaudos.computrons.co/controllers/funciones.php on line 1216
