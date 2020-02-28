@@ -160,7 +160,7 @@
 			@$statementConsulta = Conexion::Conectar();
 			$consultaConsulta = $statementConsulta->query($consulta);
 			$countRowsConsulta = $consultaConsulta->rowCount();
-			if ($countRowsConsulta) {
+			if ($countRowsConsulta > 0) {
 				echo '
 				<script>
 					alert("Usted Ya tiene una session previamente Activa en el Modulo: '.$_POST['n_modulo'].', lo redigiremos a su Session.");

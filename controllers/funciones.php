@@ -415,7 +415,7 @@
 					<tr>
                     	<td>'.$value['usuario'].'</td>
 						<td>'.$value['email'].'</td>
-						<td>'.$value['nombre'].'</td>
+						<td>'.$value['nombre'].' '.$value['apellido'].'</td>
 						<td>'.$value['telefono'].'</td>
 						<td>
 							<a href="edit-medic?id='.$value['id_usuario'].'"><img src="assets/img/iconos/pencil.png" /></a> 
@@ -475,7 +475,7 @@
 			    '
 					<form method="post" id="datos-edit-medic">
 					<div class="form-group">
-                      <label for="usuario">Cedula</label>
+                      <label for="usuario">Usuario</label>
                       <input type="text" class="form-control" aria-describedby="emailHelp" name="usuario" placeholder="usuario" value="'.$value['usuario'].'" required id="usuario">
                       
                     </div>

@@ -131,7 +131,7 @@ else if ($_SESSION['privilegio']=='2') {
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header"></h6>
-            <a class="collapse-item" href="digitador">Solicitar Turno</a>
+            <!-- <a class="collapse-item" href="digitador">Solicitar Turno</a> -->
             <a class="collapse-item" href="turn-secretary">Ver turnos</a>
 
             
