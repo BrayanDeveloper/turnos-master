@@ -46,6 +46,7 @@
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 class="h3 mb-0 text-gray-800">Citas</h1>
+            <div id="success"></div>
             <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
           </div>
 
@@ -70,7 +71,7 @@
                         
                       }
                       ?>
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"><a class="btn btn-warning" id="btn-filtro-fecha">Filtrar por Fecha</a></div>
+                      <!-- <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"><a class="btn btn-warning" id="btn-filtro-fecha">Filtrar por Fecha</a></div> -->
                       <div id="espacio-filtro" style="display: none; width:30%;">
                         <input type="date" name="date" id="date" class="form-control">
                       </div>
@@ -79,6 +80,7 @@
                     <div class="col-auto">
                       <!-- <i class="fas fa-calendar fa-2x text-gray-300"></i> -->
                     </div>
+                    
                   </div>
                 </div>
               </div>
@@ -142,6 +144,7 @@
           "accion": "filtro_fecha_citation"
         },
         success: function(r){
+          $('#espacio-resultado').empty();
           $('#espacio-resultado').html(r);
           $('#table').DataTable();
 

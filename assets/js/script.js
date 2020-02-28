@@ -214,6 +214,54 @@ $(document).ready(function(){
          return false;
       });
 
+      $("#llamando-cita button").click(function(){
+        //alert($(this).val());
+        var datos = $(this).val();
+        var id_boton = 'btn-'+ datos;
+        var acciones = "llamando-cita";
+        //alert(datos);
+        
+        $.post({
+        type: 'POST',
+        url: 'models/update',
+        data: {
+          "accion": acciones,
+          "dato": datos,
+          "id_boton": id_boton
+        },
+          success: function(r){
+          $('#success').html(r);  
+                 
+          }
+
+        });
+                           
+        return false;
+      });
+
+
+      $("#atendiendo-cita button").click(function(){
+        var dato = $(this).val();
+        var accion = "atendiendo-cita";
+        
+        
+        $.post({
+        type: 'POST',
+        url: 'models/update',
+        data: {
+          "accion": accion,
+          "dato": dato,
+        },
+          success: function(r){
+          $('#success').html(r);                                   
+             //alert("Hagale mija");        
+          }
+
+        });
+                           
+        return false;
+      });
+
       
 
       

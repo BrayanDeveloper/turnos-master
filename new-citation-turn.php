@@ -160,6 +160,9 @@
   
   <?php include 'inc/js-admin.php'; ?>
   <script type="text/javascript">
+    $(document).ready(function(){
+      // $('.medico').select2();
+    });
     //$('#campos_date').hide();
 
     // guarda cita

@@ -72,9 +72,9 @@
       
       
       case 'turno_publico':
-
+      		
 			
-			$sql = "SELECT turnos.sonido, usuarios.n_modulo, turnos.turno FROM turnos RIGHT JOIN usuarios ON turnos.id_usuario = usuarios.id_usuario WHERE fecha = CURRENT_DATE() AND atendido = 1 AND usuarios.estado_modulo = 1 ORDER BY id_turno DESC";
+			$sql = "SELECT turnos.color_aviso, turnos.sonido, usuarios.n_modulo, turnos.turno FROM turnos RIGHT JOIN usuarios ON turnos.id_usuario = usuarios.id_usuario WHERE fecha = CURRENT_DATE() AND atendido = 1 AND usuarios.estado_modulo = 1 ORDER BY id_turno DESC";
 			
 			@$statement = Conexion::Conectar();
 			$consulta = $statement->query($sql)->fetchAll();
@@ -83,30 +83,82 @@
 					echo "
 					<div class='table-responsive'>
 					<table class='table table-bordered' style='margin-top: 40px;'>
-  						<thead>
+  						<thead class='bg-primary text-light'>
   						<tr>
     						<th scope='col' class='text-aling:center'>Turno</th>
     						<th scope='col'>Módulo</th>
-    						<th scope='col'></th>
+    						
+    					</tr>
+  						</thead>
+  						<tbody>
+    					";
+    					
+    					foreach ($consulta as $key) {
+							$turno = $key['turno'];
+							$modulo = $key['n_modulo'];
+							$sonido = $key['sonido'];
+							$color = $key['color_aviso'];
+						echo"
+
+    						<tr class='celda-' style='background-color: ".$color."; '>
+      							<td class='text-dark celda-".$turno." ' style='text-transform: uppercase; '><strong style='color: white;'>".$turno."</strong>
+								
+      							</td>
+      							<td class='text-dark' style='text-transform: uppercase; '><strong style='color: white;'>".$modulo."</strong></td>
+      							
+    						</tr>
+    					";
+    					
+    				    }
+    					echo"
+    					</tbody>
+					</table>
+					</div>
+					";
+			}
+			
+			break;
+
+			#ver citas en sala de espera
+			case 'cita_publica':
+
+			
+			$sql = "SELECT citas.color_aviso, usuarios.n_consultorio, citas.hora_llamada, citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.atendido = 1 AND citas.fecha_cita = CURRENT_DATE() ORDER BY citas.id_cita DESC";
+			
+			@$statement = Conexion::Conectar();
+			$consulta = $statement->query($sql)->fetchAll();
+			if($consulta){
+				
+					echo "
+					<div class='table-responsive'>
+					<table class='table table-bordered' style='margin-top: 40px;'>
+  						<thead class='bg-primary text-light'>
+  						<tr>
+    						<th scope='col' class='text-aling:center'>Hora:</th>
+    						<th scope='col' class='text-aling:center'>paciente:</th>
+    						<th scope='col'>Consultorio</th>
+    						<th scope='col'>Medico</th>
     					</tr>
   						</thead>
   						<tbody>
     					";
     					foreach ($consulta as $key) {
-							$turno = $key['turno'];
-							$modulo = $key['n_modulo'];
-							$sonido = $key['sonido'];
+							$hora = $key['hora_llamada'];
+							$id = $key['id_cita'];
+							$Consultorio = $key['n_consultorio'];
+							$paciente = $key['nombres_paciente'];
+							$medico = $key['nombres_medico'];
+							$color_aviso = $key['color_aviso'];
 						echo"
 
-    						<tr value=".$turno.">
-      							<td>".$turno."</td>
-      							<td>".$modulo."</td>
-      							<td>
-      								
-      							</td>
+    						<tr id='".$id."' style='background-color: ".$color_aviso.";'>
+    							<td class='text-light' style='text-transform: uppercase; '>".$hora."</td>
+      							<td class='text-light' style='text-transform: uppercase; '>".$paciente."</td>
+      							<td class='text-light' style='text-transform: uppercase; '>".$Consultorio."</td>
+      							<td class='text-light' style='text-transform: uppercase; '>".$medico."</td>
     						</tr>
     					";
-    					break;
+    					
     				    }
     					echo"
     					</tbody>
@@ -260,13 +312,13 @@
 
 				case 'filtro_fecha_citation':
 					if ($_SESSION['privilegio']=='3') {
-							$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' and citas.id_medico = ".$_SESSION['id_usuario']." ORDER BY citas.id_cita DESC";
+							$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' and citas.id_medico = ".$_SESSION['id_usuario']." ORDER BY citas.id_cita DESC";
 						}
 						else if ($_SESSION['privilegio']=='2') {
-							$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' ORDER BY citas.id_cita DESC";
+							$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' ORDER BY citas.id_cita DESC";
 						}
 						else if ($_SESSION['privilegio']=='1') {
-							$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' ORDER BY citas.id_cita DESC";
+							$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = '".$_POST['date']."' ORDER BY citas.id_cita DESC";
 						}
 						@$statement = Conexion::Conectar();
 						$consulta = $statement->query($sql)->fetchAll();
@@ -287,6 +339,75 @@
 			               <tbody>
 						";
 						foreach ($consulta as $value) {
+							if ($_SESSION['privilegio']=='3') {
+							$llamadaReturn = '';
+				if ($_SESSION['privilegio']=='3') {
+					if ($value['atendido']==0) {
+					$estadoColor = "btn-warning";
+					$estado = "Llamar Cita";
+					$habilite = '';
+					$llamada = '<span id="llamando-cita"  class="'.$estadoColor.'">
+							<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="'.$estado.'"/></button> 
+					      </span>';
+					}
+					else if ($value['atendido']==1) {
+						$estadoColor = "btn-success";
+						$estado = "Poner en espera";
+						$habilite = '<span id="atendiendo-cita">
+							    <button style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/clock.png" title="Atender cita"/></button>
+							  </span>';
+						$llamada = '<span id="llamando-cita"  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="'.$estado.'"/></button> 
+						      </span>';
+					}
+					else if ($value['atendido']==2) {
+						$estadoColor = "";
+						$estado = "Esta cita ya fue Atendida.";
+						$habilite = '';
+						$llamada = '<span id=""  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/start.png" title="'.$estado.'"/></button> 
+						      </span>';
+						$llamadaReturn = '<span id="atendiendo-cita"  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="Desea volver a llamar esta cita"/></button> 
+						      </span>';
+					}
+						
+							$prigivilegiosAltos = $llamada .' '. $habilite.' '.$llamadaReturn;
+						}
+						
+							}
+					else if ($_SESSION['privilegio']=='2') {
+						
+						$prigivilegiosAltos = '<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
+									<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
+									<script>
+										document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
+												var com = confirm("Deseas Eliminar?");
+												if(com){
+													location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
+												}
+												else{
+													
+												}
+										}
+									</script>';
+					}
+					else if ($_SESSION['privilegio']=='1') {
+						
+						$prigivilegiosAltos = '<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
+									<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
+									<script>
+										document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
+												var com = confirm("Deseas Eliminar?");
+												if(com){
+													location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
+												}
+												else{
+													
+												}
+										}
+									</script>';
+					}
 						    echo 
 						    '
 								<tr>
@@ -297,24 +418,36 @@
 									<td>'.$value['nombres_medico'].'</td>
 									<td>'.$value['estado'].'</td>
 									<td>
-							<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
-							<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
-							<script>
-								document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
-										var com = confirm("Deseas Eliminar?");
-										if(com){
-											location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
-										}
-										else{
-											
-										}
-								}
-							</script>
-						</td>
+									'.$prigivilegiosAltos.'
+									</td>
 								</tr>
 							';
 						}
 						echo "</tbody></table></div>";
+					break;
+
+					#Llamar cita
+			
+					case 'llamando-cita':
+					
+					$sql = "SELECT pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres FROM `turnos` LEFT JOIN pacientes ON turnos.cedula = pacientes.cedula_paciente WHERE turnos.id_turno = ".$_POST['dato'].";";
+					
+					@$statement = Conexion::Conectar();
+					$consulta = $statement->query($sql)->fetchAll();
+					$id_paciente = 0;
+					$nombre_paciente = "";
+					if($consulta){
+						foreach ($consulta as $key) {
+							$id_paciente = $key['cedula_paciente'];
+							$nombre_paciente = $key['nombres'];
+						}
+
+					}
+						
+						echo "<script>
+								location.href = 'new-citation-turn?id=".$id_paciente."&nombre=".$nombre_paciente."&id_turno=".@$_POST['dato']."';
+							  </script>";
+					
 					break;
   
 

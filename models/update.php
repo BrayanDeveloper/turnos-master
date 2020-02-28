@@ -99,9 +99,19 @@
 			$sql = "SELECT atendido FROM turnos WHERE id_turno = ".$_POST['dato']."; ";
 			@$statement = Conexion::Conectar();
 			$consulta = $statement->query($sql)->fetchAll();
+			$random = rand(1,3);
+			if ($random == 1) {
+				$color = '#31E078';
+			}
+			else if ($random == 2) {
+				$color = '#4ABED8';
+			}
+			else if ($random == 3) {
+				$color = '#D8774A';
+			}
 			foreach ($consulta as $key) {
 				if($key['atendido'] == 0){
-					$sql2= "UPDATE turnos SET hora_llamada = curTime(), atendido = 1, id_usuario = ".$_SESSION['id_usuario'].", sonido = '".$_POST['sonido']."'  WHERE id_turno = ".$_POST['dato']."; ";
+					$sql2= "UPDATE turnos SET hora_llamada = curTime(), atendido = 1, id_usuario = ".$_SESSION['id_usuario'].", sonido = '".$_POST['sonido']."', color_aviso = '".$color."' WHERE id_turno = ".$_POST['dato']."; ";
 					$consulta = $statement->query($sql2);
 
 					echo "
@@ -257,10 +267,95 @@
 			}
 
 
-			
+			break;
 
-
+			#Llamar cita
+			case 'llamando-cita':
 			
+			$sql = "SELECT atendido FROM citas WHERE id_cita = ".$_POST['dato']."; ";
+			@$statement = Conexion::Conectar();
+			$consulta = $statement->query($sql)->fetchAll();
+
+			$random = rand(1,3);
+			if ($random == 1) {
+				$color = '#31E078';
+			}
+			else if ($random == 2) {
+				$color = '#4ABED8';
+			}
+			else if ($random == 3) {
+				$color = '#D8774A';
+			}
+			foreach ($consulta as $key) {
+				if($key['atendido'] == 0){
+					$sql2= "UPDATE citas SET hora_llamada = curTime(), atendido = 1, id_usuario_medic = ".$_SESSION['id_usuario'].", color_aviso = '".$color."'  WHERE id_cita = ".$_POST['dato']."; ";
+					$consulta = $statement->query($sql2);
+
+					echo "
+
+ 						Se ha llamado
+
+					";
+					echo "
+					<script>
+						$('#success').addClass('btn-success').removeClass('btn-warning');
+						location.href = 'citation';
+					</script>
+					";
+			    }
+			    else{
+			    	$sql2= "UPDATE citas SET hora_llamada = '00:00:00', atendido = 0, id_usuario_medic = 0 WHERE id_cita = ".$_POST['dato']."; ";
+					$consulta = $statement->query($sql2);
+					echo "
+					     Se ha puesto en espera
+					";
+					echo "
+					<script>
+						$('#success').addClass('btn-warning').removeClass('btn-success');
+						location.href = 'citation';
+					</script>
+					";
+			    }
+			}
+			break;
+
+			#atendiendo cita
+			case 'atendiendo-cita':
+			
+			$sql = "SELECT atendido FROM citas WHERE id_cita = ".$_POST['dato']."; ";
+			@$statement = Conexion::Conectar();
+			$consulta = $statement->query($sql)->fetchAll();
+			foreach ($consulta as $key) {
+				if($key['atendido'] == 1){
+					$sql2= "UPDATE citas SET hora_llamada = curTime(), atendido = 2, id_usuario_medic = ".$_SESSION['id_usuario']."  WHERE id_cita = ".$_POST['dato']."; ";
+					$consulta = $statement->query($sql2);
+
+					echo "
+
+ 						Se ha atendido Satisfactoriamente.
+
+					";
+					echo "
+					<script>
+						$('#success').addClass('btn-success').removeClass('btn-warning');
+						location.href = 'citation';
+					</script>
+					";
+			    }
+			    else if($key['atendido'] == 2){
+			    	$sql2= "UPDATE citas SET hora_llamada = curTime(), atendido = 1, id_usuario_medic = ".$_SESSION['id_usuario']." WHERE id_cita = ".$_POST['dato']."; ";
+					$consulta = $statement->query($sql2);
+					echo "
+					     Se ha Llamado
+					";
+					echo "
+					<script>
+						$('#success').addClass('btn-warning').removeClass('btn-success');
+						location.href = 'citation';
+					</script>
+					";
+			    }
+			}
 			break;
 
 	}

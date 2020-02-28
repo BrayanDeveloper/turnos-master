@@ -44,16 +44,21 @@
       <div class="container-fluid">
           
           <div class="row">
-
             <div class="col-xl-6 col-md-6 col-sm-12 mb-8">
+              <center>
+                <legend style="color:white; background-color: dodgerblue; text-align: center; border-radius: 5%; width: 50%; align-items: center;">Turnos</legend>
               <div class="" id="success" style="text-align: center;"></div>
+             
+              </center>
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-12 mb-8">
+              <center>
+              <legend style="color:white; background-color: dodgerblue; text-align: center; border-radius: 5%; width: 50%; align-items: center;">Citas</legend>
+              <div class="" id="success_cita" style="text-align: center;"></div>
+              </center>
             </div>
 
-            <div class="col-xl-6 col-md-6 col-sm-12 mb-8">
-              <div class="" id="">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/tw_rsITLgZ0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            </div>            
+                       
 
           </div>
             
@@ -107,11 +112,32 @@
           "accion": accion
         },
             success: function(r){
-              $('#success').html(r);                                   
+              $('#success').html(r);
+               
+              
             }
         });
       }
         setInterval(datosTime, 1000);
+
+
+    // ver citas en tiempo real
+      function datosTimeCitas(){
+          
+        $.post({
+          type: 'POST',
+          url: 'models/vistas',
+          data: {
+          "accion": 'cita_publica'
+        },
+            success: function(r){
+              $('#success_cita').html(r);                                   
+            }
+        });
+      }
+        setInterval(datosTimeCitas, 1000);
+
+
 
          
       

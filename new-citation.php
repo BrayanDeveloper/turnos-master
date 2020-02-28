@@ -54,7 +54,7 @@
 
             <!-- Earnings (Monthly) Card Example -->
            
-            <div class="col-xl-4 col-md-12 mb-16">
+            <div class="col-xl-4 col-md-12 mb-8">
               <div class="card border-left-primary shadow h-100 py-2">
                   
 
@@ -87,8 +87,19 @@
                       <input type="hidden" name="accion" value="new-citation" id="accion">
                     </div>
                     
-                    <button type="submit" class="btn btn-primary" id="envio-citation">Guardar</button>
+                    <button type="submit" class="btn btn-primary" id="envio-citation">Guardar</button> 
+                    <a id="see-cf" class="btn btn-warning text-light">Ver Citas por otra fecha</a>
                     
+                  <div id='campos_citas_otra_f' style="display: none;">
+                    <br>
+                        <label>Fecha:</label>
+                        <input type="date" name="date-searh" class="form-control" id="date-searh">
+
+                        <br>
+                        <button type="button" class="btn btn-primary" name="searh-citation" id="searh-citation">Buscar Cita</button>
+                        
+                        
+                      </div>
                     
                     
             
@@ -96,22 +107,15 @@
                 </div>
               </div>
             </div>
-            <div class="col-xl-4 col-md-12 mb-16">
+            <div class="col-xl-8 col-md-8 mb-8">
               <div class="card shadow h-100 py-2">
                 
+                  <div id="res"></div>
                   </form>
-                </div>
+              </div>
               </div>
             </div>
             <div id="success"></div>
-
-            
-
-            <!-- Earnings (Monthly) Card Example -->
-            
-
-          
-        
 
           </div>
       
@@ -153,6 +157,11 @@
   
   <?php include 'inc/js-admin.php'; ?>
      <script>
+      $(document).ready(function(){
+        $('#paciente').select2();
+        $('#medico_citation').select2();
+
+      });
        $('#envio-citation').click(function(){
           var datos = $('#datos-new-citation').serialize();
           $.post({
@@ -169,6 +178,33 @@
             return false;
 
             });
+       $('#see-cf').click(function(){
+        $('#campos_citas_otra_f').slideToggle();
+      }); 
+
+       $("#searh-citation").click(function(){
+        $('#campos_date').hide();
+        var medico = $('#medico_citation').val();
+        var date_searh = $('#date-searh').val();
+        var accion = "searh-date-citation";
+         
+         $.post({
+          type: 'POST',
+          url: 'models/vistas',
+          data: {
+            "medico": medico,
+            "date_searh": date_searh,
+            "accion": accion
+          },
+            success: function(r){
+            $('#res').html(r);                                   
+                
+            }
+
+        });
+         
+         return false;
+      });
      </script>
 </body>
 

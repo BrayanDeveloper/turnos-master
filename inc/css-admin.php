@@ -7,6 +7,7 @@
   <!-- Custom styles for this template-->
   <link href="assets/css/sb-admin-2.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/datatable.css">
+  <link rel="stylesheet" href="assets/css/select2.css">
   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" /> -->
  
   

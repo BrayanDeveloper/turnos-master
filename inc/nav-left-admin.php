@@ -194,7 +194,7 @@ else if ($_SESSION['privilegio']=='3') {
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header"></h6>
             <a class="collapse-item" href="citation">Ver Citas</a>
-            <a class="collapse-item" href="new-citation">Nueva Cita</a>
+            <!-- <a class="collapse-item" href="new-citation">Nueva Cita</a> -->
             
           </div>
           

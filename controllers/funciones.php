@@ -332,7 +332,19 @@
                <tbody>
 			";
 			foreach ($consulta as $value) {
-				if ($value['atendido']==0) {
+				$habilite = '';
+				$llamada = '';
+				if ($_SESSION['privilegio']==1) {
+					if ($value['atendido']==0) {
+					$estadoColor = "btn-warning";
+					$estado = "Llamar Paciente";
+					$habilite = '';
+					$llamada = '';
+				}
+				
+				}
+				else {
+					if ($value['atendido']==0) {
 					$estadoColor = "btn-warning";
 					$estado = "Llamar Paciente";
 					$habilite = '';
@@ -357,6 +369,8 @@
 						    <button style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_turno'].'" ><img src="assets/img/iconos/start.png"  title="Este Turno ya fue Atendido"/></button>';
 					$llamada = '';
 				}
+				}
+
 			    echo 
 			    '
 					<tr>
@@ -597,13 +611,13 @@
 		#ver citas
 		function verCitas(){
 			if ($_SESSION['privilegio']=='3') {
-				$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() and citas.id_medico = ".$_SESSION['id_usuario']." ORDER BY citas.id_cita DESC";
+				$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() and citas.id_medico = ".$_SESSION['id_usuario']." ORDER BY citas.id_cita DESC";
 			}
 			else if ($_SESSION['privilegio']=='2') {
-				$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() ORDER BY citas.id_cita DESC";
+				$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() ORDER BY citas.id_cita DESC";
 			}
 			else if ($_SESSION['privilegio']=='1') {
-				$sql = "SELECT citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() ORDER BY citas.id_cita DESC";
+				$sql = "SELECT citas.atendido, citas.estado, citas.id_cita, citas.fecha_cita, citas.hora_cita, pacientes.cedula_paciente, CONCAT(pacientes.nombre_paciente, ' ',pacientes.apellido_paciente) AS nombres_paciente, CONCAT(usuarios.nombre,' ',usuarios.apellido) AS nombres_medico FROM `citas` LEFT JOIN pacientes ON citas.cedula_paciente = pacientes.cedula_paciente LEFT JOIN usuarios ON citas.id_medico = usuarios.id_usuario WHERE citas.fecha_cita = CURRENT_DATE() ORDER BY citas.id_cita DESC";
 			}
 			@$statement = Conexion::Conectar();
 			$consulta = $statement->query($sql)->fetchAll();
@@ -624,6 +638,83 @@
                <tbody>
 			";
 			foreach ($consulta as $value) {
+				$llamadaReturn = '';
+				if ($_SESSION['privilegio']=='3') {
+					if ($value['atendido']==0) {
+					$estadoColor = "btn-warning";
+					$estado = "Llamar Cita";
+					$habilite = '';
+					$llamada = '<span id="llamando-cita"  class="'.$estadoColor.'">
+							<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="'.$estado.'"/></button> 
+					      </span>';
+					}
+					else if ($value['atendido']==1) {
+						$estadoColor = "btn-success";
+						$estado = "Poner en espera";
+						$habilite = '<span id="atendiendo-cita">
+							    <button style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/clock.png" title="Atender cita"/></button>
+							  </span>';
+						$llamada = '<span id="llamando-cita"  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="'.$estado.'"/></button> 
+						      </span>';
+					}
+					else if ($value['atendido']==2) {
+						$estadoColor = "";
+						$estado = "Esta cita ya fue Atendida.";
+						$habilite = '';
+						$llamada = '<span id=""  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/start.png" title="'.$estado.'"/></button> 
+						      </span>';
+						$llamadaReturn = '<span id="atendiendo-cita"  class="'.$estadoColor.'">
+								<button id="btn-'.$value['id_cita'].'" style="background-color: transparent; outline: none; border:0;" type="button" value="'.$value['id_cita'].'" ><img src="assets/img/iconos/phone-call.png" title="Desea volver a llamar esta cita"/></button> 
+						      </span>';
+					}
+						
+							$prigivilegiosAltos = $llamada .' '. $habilite.' '.$llamadaReturn.'
+										<script>
+											document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
+													var com = confirm("Deseas Eliminar?");
+													if(com){
+														location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
+													}
+													else{
+														
+													}
+											}
+										</script>';
+						}
+					else if ($_SESSION['privilegio']=='2') {
+						
+						$prigivilegiosAltos = '<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
+									<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
+									<script>
+										document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
+												var com = confirm("Deseas Eliminar?");
+												if(com){
+													location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
+												}
+												else{
+													
+												}
+										}
+									</script>';
+					}
+					else if ($_SESSION['privilegio']=='1') {
+						
+						$prigivilegiosAltos = '<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
+									<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
+									<script>
+										document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
+												var com = confirm("Deseas Eliminar?");
+												if(com){
+													location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
+												}
+												else{
+													
+												}
+										}
+									</script>';
+					}
 			    echo 
 			    '
 					<tr>
@@ -634,19 +725,7 @@
 						<td>'.$value['nombres_medico'].'</td>
 						<td>'.$value['estado'].'</td>
 						<td>
-							<a href="edit-citation?id='.$value['id_cita'].'"><img src="assets/img/iconos/pencil.png" /></a> 
-							<a><img src="assets/img/iconos/delete.png" id="btn_del_'.$value['id_cita'].'" /></a>
-							<script>
-								document.getElementById("btn_del_'.$value['id_cita'].'").onclick = function(){
-										var com = confirm("Deseas Eliminar?");
-										if(com){
-											location.href = ("models/delete?model=citation&id='.$value['id_cita'].'");
-										}
-										else{
-											
-										}
-								}
-							</script>
+							'.$prigivilegiosAltos.'
 						</td>
 					</tr>
 				';
@@ -679,7 +758,7 @@
 			@$statement = Conexion::Conectar();
 			$consulta = $statement->query($sql)->fetchAll();
 			echo "
-			<select name='medico' id='medico' class='form-control'>
+			<select name='medico' id='medico' class='form-control medico'>
 			";
 			
 			foreach ($consulta as $value) {
